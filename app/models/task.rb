@@ -11,5 +11,15 @@
 #  updated_at  :datetime         not null
 #
 class Task < ApplicationRecord
-  belongs_to :category
+    belongs_to :category
+
+    validates :name, :description, presence: true
+    validates :name, uniqueness: { case_sensitive: false }
+    validate :due_date_validity
+
+    def due_date_validity
+      return if due_date.blank?
+      return if due_date > Date.today
+      errors.add(:due_date, 'the date cannot be in the past tense')
+    end
 end
